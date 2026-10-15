@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Image Gallery</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f4f4f4;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        /* Image grid */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 1000px;
+            margin: 25px auto;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        /* Hover effect */
+        .gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Slideshow */
+        .slideshow {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .slideshow img {
+            max-width: 80%;
+            max-height: 70%;
+            border-radius: 10px;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 18px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            background: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Interactive Image Gallery</h1>
+    <p>Click an image to start the slideshow.</p>
+
+    <div class="gallery">
+        <img src="https://picsum.photos/id/1015/600/400"
+             alt="Mountain landscape" onclick="openSlide(0)">
+
+        <img src="https://picsum.photos/id/1018/600/400"
+             alt="Forest landscape" onclick="openSlide(1)">
+
+        <img src="https://picsum.photos/id/1020/600/400"
+             alt="Wildlife" onclick="openSlide(2)">
+
+        <img src="https://picsum.photos/id/1039/600/400"
+             alt="Mountain scenery" onclick="openSlide(3)">
+
+        <img src="https://picsum.photos/id/1043/600/400"
+             alt="Nature scenery" onclick="openSlide(4)">
+
+        <img src="https://picsum.photos/id/1050/600/400"
+             alt="Beautiful landscape" onclick="openSlide(5)">
+    </div>
+
+    <!-- Slideshow window -->
+    <div class="slideshow" id="slideshow">
+        <button class="close" onclick="closeSlide()">X</button>
+
+        <img id="slideImage" src="" alt="Slideshow image">
+
+        <div class="controls">
+            <button onclick="changeSlide(-1)">Previous</button>
+            <button onclick="toggleAutoPlay()" id="autoBtn">
+                Start Auto-play
+            </button>
+            <button onclick="changeSlide(1)">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const images = document.querySelectorAll(".gallery img");
+        const slideshow = document.getElementById("slideshow");
+        const slideImage = document.getElementById("slideImage");
+        const autoBtn = document.getElementById("autoBtn");
+
+        let currentIndex = 0;
+        let timer = null;
+
+        // Open slideshow
+        function openSlide(index) {
+            currentIndex = index;
+            showSlide();
+            slideshow.style.display = "flex";
+        }
+
+        // Display current image
+        function showSlide() {
+            slideImage.src = images[currentIndex].src;
+            slideImage.alt = images[currentIndex].alt;
+        }
+
+        // Next and previous navigation
+        function changeSlide(step) {
+            currentIndex =
+                (currentIndex + step + images.length) % images.length;
+
+            showSlide();
+        }
+
+        // Start or stop auto-play
+        function toggleAutoPlay() {
+            if (timer !== null) {
+                clearInterval(timer);
+                timer = null;
+                autoBtn.textContent = "Start Auto-play";
+            } else {
+                timer = setInterval(function () {
+                    changeSlide(1);
+                }, 2000);
+
+                autoBtn.textContent = "Stop Auto-play";
+            }
+        }
+
+        // Close slideshow
+        function closeSlide() {
+            slideshow.style.display = "none";
+
+            if (timer !== null) {
+                clearInterval(timer);
+                timer = null;
+                autoBtn.textContent = "Start Auto-play";
+            }
+        }
+
+        // Close using Escape key
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeSlide();
+            }
+        });
+    </script>
+
+</body>
+</html>
